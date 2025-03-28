@@ -1,0 +1,35 @@
+<tbody>
+  <tr className="bg-white">
+    {chunk.map(([key, value]) => (
+      <td
+        key={key}
+        className="border-2 px-2 py-2 text-left text-[10px] font-normal"
+      >
+        {(key.includes("amount") || key.includes("billAmount")) &&
+        (serviceKey === "DMT_MONEY_TRANSFER" || serviceKey === "BBPS_BILL_PAY")
+          ? (Number(value) / 100).toFixed(2).toString()
+          : value}
+      </td>
+    ))}
+  </tr>
+</tbody>;
+
+const filteredObj = Object.entries(obj)
+  .filter(
+    ([key, value]) =>
+      key !== "invoiceId" &&
+      key !== "serviceName" &&
+      key !== "customerAdhaar" &&
+      key !== "total" &&
+      key !== "0|invoiceCreatedAt" &&
+      key !== "0|invoiceId" &&
+      key !== "0|serviceName" &&
+      key !== "3-customerAdhaar" &&
+      key !== "Total" &&
+      key !== "invoiceCreatedAt" &&
+      key !== "custConvFee" &&
+      value !== null && // Exclude null values
+      value !== undefined && // Exclude undefined values
+      value !== "" // Exclude empty strings
+  )
+  .sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
