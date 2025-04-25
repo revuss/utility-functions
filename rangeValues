@@ -1,0 +1,19 @@
+function findLeastValues(rangeData:any)
+{
+     let leastCharge:number = Infinity;
+     let leastCommission =Infinity;
+    for (const item of rangeData)
+    {
+      if (typeof item?.charge === "number" && item?.charge < leastCharge)
+      { 
+        leastCharge= item?.charge
+      }
+      if (typeof item.commission === 'number' && item.commission < leastCommission) {
+            leastCommission = item.commission;
+        }
+    }
+     return {
+        commission: leastCommission === Infinity ? null : leastCommission,
+        charge: leastCharge === Infinity ? null : leastCharge
+    };
+}
