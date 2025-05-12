@@ -1,0 +1,73 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
+import "./App.css";
+import { planeDataResponse } from "./data";
+
+interface FlightSegment {
+  itinRef: string;
+  origin: string;
+  destination: string;
+  departureDateTime: string;
+}
+
+interface StructuredData {
+  onwardFlights: FlightSegment[];
+  returnFlights: FlightSegment[];
+  fares: any[];
+}
+
+function App() {
+  const [flightData, setFlightData] = useState<StructuredData[]>([]);
+
+  useEffect(() => {
+    const allItems = planeDataResponse.itineraryFlightList[0].items;
+
+    const structured: StructuredData[] = allItems.map((item: any) => {
+      const onwardFlights = item.flightDetails.filter(
+        (segment: any) => segment.itinRef === "0"
+      );
+      const returnFlights = item.flightDetails.filter(
+        (segment: any) => segment.itinRef === "1"
+      );
+      return {
+        onwardFlights,
+        returnFlights,
+        fares: item.fares,
+      };
+    });
+
+    setFlightData(structured);
+  }, []);
+
+  return (
+    <div className="flight-data-container">
+      {flightData.map((entry, index) => (
+        <div key={index} className="flight-group">
+          <h2>Itinerary {index + 1}</h2>
+
+          <h3>Onward Flights</h3>
+          <ul>
+            {entry.onwardFlights.map((flight, idx) => (
+              <li key={idx}>
+                {flight.origin} → {flight.destination} (
+                {flight.departureDateTime})
+              </li>
+            ))}
+          </ul>
+
+          <h3>Return Flights</h3>
+          <ul>
+            {entry.returnFlights.map((flight, idx) => (
+              <li key={idx}>
+                {flight.origin} → {flight.destination} (
+                {flight.departureDateTime})
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default App;
