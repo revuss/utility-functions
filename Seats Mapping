@@ -1,0 +1,102 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { seatsMapData } from "./data";
+import { useState } from "react";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+
+function App() {
+  const seatArray =
+    seatsMapData?.seatMapResponse?.flightSeat?.[0]?.SeatMap ?? [];
+
+  const [selectedSeatRef, setSelectedSeatRef] = useState<string | null>(null);
+
+  const handleSelect = (seat: any) => {
+    if (seat.SeatAvailability === "Open") {
+      setSelectedSeatRef(seat.SeatRef);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center bg-gray-900 min-h-screen  overflow-hidden">
+      <div className="relative max-w-full h-[50vh] flex justify-start items-start border rounded overflow-y-auto overflow-hidden bg-gray-900 px-4">
+        <div
+          className=""
+          style={{
+            width: `${
+              Math.max(...seatArray.map((s) => Number(s.XAxis))) * 50 + 100
+            }px`,
+            height: `${
+              Math.max(...seatArray.map((s) => Number(s.YAxis))) * 50 + 100
+            }px`,
+          }}
+        >
+          {seatArray.map((seat) => {
+            const isAvailable = seat.SeatAvailability === "Open";
+            const isSelected = seat.SeatRef === selectedSeatRef;
+            const isPremium = seat.SeatCategory === "SPICEMAX";
+            const xPos = Number(seat.XAxis) * 50;
+            const yPos = Number(seat.YAxis) * 50;
+
+            return (
+              <div
+                key={seat.SeatRef}
+                style={{
+                  position: "absolute",
+                  top: `${yPos}px`,
+                  left: `${xPos}px`,
+                  width: "50px",
+                  height: "50px",
+                }}
+                className={`text-xs font-bold rounded border flex items-center justify-center
+              ${
+                isSelected
+                  ? "bg-blue-600 text-white cursor-pointer"
+                  : isPremium
+                  ? "bg-orange-400 text-white cursor-pointer"
+                  : isAvailable
+                  ? "bg-green-500 text-white cursor-pointer"
+                  : "bg-gray-300 text-gray-700"
+              }
+            `}
+                onClick={() => handleSelect(seat)}
+                title={seat.SeatCharacterstic || ""}
+              >
+                {seat.SeatName}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div>
+        <img
+          src="./airplane.svg"
+          alt="Airplane"
+          className="w-[20vw] flying-airplane"
+          style={{ animation: "fly 4s ease-in-out infinite" }}
+        />
+
+        <style>
+          {`
+      @keyframes fly {
+        0%, 100% {
+          transform: translateY(0px) translateX(0px);
+        }
+        25% {
+          transform: translateY(-10px) translateX(5px);
+        }
+        50% {
+          transform: translateY(0px) translateX(10px);
+        }
+        75% {
+          transform: translateY(10px) translateX(5px);
+        }
+      }
+    `}
+        </style>
+      </div>
+    </div>
+  );
+}
+
+export default App;
